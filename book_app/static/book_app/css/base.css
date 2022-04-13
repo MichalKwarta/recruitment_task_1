@@ -1,0 +1,141 @@
+:root{
+    --dark:#212734;
+    --golden:#c49a50;
+    --light:#fdfdfd;
+
+}
+
+body{
+    background-color: var(--dark);
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color:var(--light)
+
+}
+nav{
+    width:100%;
+    padding:1rem;
+    border-bottom:1px solid #c49a50;
+}
+
+*,*::after,*::before{
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
+}
+
+
+div.content{
+    width:100%;
+    padding:1rem;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+    height: 100%;
+    color:var(--light)
+}
+
+div.card{
+    border:1px solid #c49a50;
+    border-radius: 10px;
+    padding:2rem;
+    margin:1rem;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+.card li{
+    list-style: none;
+    padding:0.25rem;
+}
+.card ul{
+    grid-row: 1;
+    grid-column: 2;
+}
+.card img {
+    grid-row:1;
+    grid-column: 1;
+}
+
+.pagination{
+    display:flex;
+    flex-direction: row;
+
+}
+button{
+    padding:.5rem;
+    outline:none;
+    border:none;
+    background-color:var(--dark);
+    border:1px solid var(--golden);
+    border-radius: .25rem;
+    color:var(--light);
+    cursor:pointer;
+    transition: .25s ease-in;
+    margin:1rem;
+
+
+}
+.mybutton:hover{
+    background-color:var(--golden);
+    color:var(--dark);
+}
+.pagination__button:hover{
+    transform: translateY(-1rem);
+    transition: .25s ease-in;
+}
+#pagination__current
+{
+    background-color:var(--golden);
+    color:var(--dark);
+    animation: appear .25s ease-in;
+}
+@keyframes appear {
+    from {
+        transform: translateY(-1rem);
+    }
+    to {
+        transform: translateY(0);
+    }
+    
+}
+.form
+{
+   
+    border-bottom:1px solid var(--golden);
+}
+.form>.filter{
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+}
+.form p{
+    margin:1rem;
+}
+.form p>input
+{
+    width: 100%;
+}
+.form>form.filter>*{
+    margin:1rem;
+}
+.form__field{
+    display:flex;
+    flex-direction: column;
+}
+ul.errorlist{
+    color:var(--white);
+    list-style: none;
+    background-color: rgba(255,100,100,0.5);  
+    border-radius:.5rem;
+    padding:1rem;
+    
+}

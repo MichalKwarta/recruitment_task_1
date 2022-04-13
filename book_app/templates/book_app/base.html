@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href={% static 'book_app/css/base.css' %}>
+
+    <title>Book_list_app</title>
+    {% block 'head' %}
+    {% endblock 'head' %}
+
+</head>
+<body>
+    <nav>Book list app
+
+        <a href="{% url 'ListView' %}"><button class="mybutton">Widok listy</button></a>
+        <a href="{% url 'BookAddView' %}"><button class="mybutton">Ręczne dodawanie</button></a>
+
+
+    </nav>
+
+
+
+
+{% block 'content' %}
+
+{% endblock 'content' %}
+
+    
+</body>
+</html>

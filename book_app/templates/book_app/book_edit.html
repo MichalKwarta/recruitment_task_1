@@ -1,0 +1,22 @@
+
+{% extends 'book_app/base.html' %}
+
+{% block 'content' %}
+<div class="form">
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>Zapisz</button>
+
+    </form>
+</div>
+
+
+
+
+
+
+
+{% endblock 'content' %}
+
+

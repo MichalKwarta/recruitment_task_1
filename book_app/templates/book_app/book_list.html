@@ -1,0 +1,108 @@
+
+{% extends 'book_app/base.html' %}
+
+{% block 'content' %}
+<div class="form">
+    <form method='GET' class="filter">
+        <span class='form__field'>
+            <label for="title">Tytuł</label>
+            <input type="text" name='title'  value = {{request.GET.title}}>
+        </span>
+        
+        
+        <span class='form__field'>
+
+            <label for="author">Autor</label>
+    
+            <input type="text" name='author' placeholder="Autor" value = {{request.GET.author}}>
+        </span>
+        <span class='form__field'>
+
+            <label for="date_from">Od daty</label>
+    
+            <input type="date" name='date_from'  value = {{request.GET.date_from}}>
+        </span>
+        <span class='form__field'>
+
+            <label for="date_to">Do daty</label>
+    
+            <input type="date" name='date_to' value = {{request.GET.date_to}} >
+        </span>
+        <span class='form__field'>
+            <label for="language" >Język publikacji</label>
+
+            <select name='language'  value = {{request.GET.language}}>
+                <option value="">--</option>
+
+                {% for lang in  request.choices   %}
+                <option value="{{ lang }}">{{ lang }}</option>
+                
+                {% endfor %}
+            </select>
+        </span>
+        <button class="form__button mybutton">Submit</button>
+    </form>
+</div>
+
+
+<div class="content">
+    {% if errors  %}
+    <h2>{{ errors }}</h2>
+    {% else %}
+    {% for book in object_list %}
+    <div class="card">
+
+    <img src="{{book.cover_url}}" alt="Okładka" >
+    <ul>
+
+    <li>Tytuł: {{ book.title }}</li>
+    <li>Autor: {{book.author}}</li>
+    <li>Data wydania: {{book.pub_date}}</li>
+    <li>ISBN: {{book.isbn}}</li>
+    <li>Ilość stron: {{book.page_count}}</li>
+    <li>Język: {{book.language}}</li>
+    <li>
+        <a href="{% url 'edit' book.id  %}">
+    <button >
+        Edytuj
+    </button>
+</a>
+
+    </li>
+    </ul>
+</div>
+
+{% empty %}
+        {Nie znaleziono takich książek}
+{% endfor %}
+</div>
+
+
+<div class="pagination">
+        
+
+        {% for i in paginator.get_elided_page_range %}
+        {% if i == page_obj.number %}
+        <a href="?page={{ i }}&{{ query }}">
+            <button class='pagination__button' id='pagination__current'>
+               {{ i }}
+            </button>
+
+            </a>
+        {% else %}
+        <a href="?page={{ i }}&{{ query}}">
+            <button class='pagination__button' >
+               {{ i }}
+            </button>
+
+            </a>
+        {% endif %}
+
+        {% endfor %}
+
+</div>
+    {% endif %}
+   
+{% endblock 'content' %}
+
+
