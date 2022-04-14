@@ -12,7 +12,11 @@ class AddOrEditForm(forms.ModelForm):
     cover_url = forms.URLField(label='URL okładki',required=False)
     language = forms.CharField(label='Język',required=False)
 
-    
+    def clean(self):
+        super().clean()
+        if self.cleaned_data.get('language')=='':
+            self.cleaned_data['language'] = None
+        
     class Meta:
         model=Book
         fields = ['title','author','pub_date','isbn','page_count','cover_url','language'] 
