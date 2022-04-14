@@ -84,7 +84,11 @@ def book_edit_view(request, id):
         instance = Book.objects.get(pk=id)
         form = AddOrEditForm(
             instance=instance,
-            initial={"pub_date": instance.pub_date.strftime(format="%Y-%m-%d") if instance.pub_date else None},
+            initial={
+                "pub_date": instance.pub_date.strftime(format="%Y-%m-%d")
+                if instance.pub_date
+                else None
+            },
         )
     return render(request, "book_app/book_edit.html", {"form": form})
 
