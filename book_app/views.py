@@ -1,9 +1,7 @@
-from typing import Any
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import  HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.generic.list import ListView
-from django.views.generic.edit import UpdateView
 import requests
 from django.core import serializers
 from .forms import AddOrEditForm, ImportForm
@@ -51,7 +49,6 @@ class BookListView(ListView):
                 if key != "page"
             ]
         )
-        print(context["query"])
         if self.request.GET.get("date_from") and self.request.GET.get("date_to"):
             if self.request.GET.get("date_from") > self.request.GET.get("date_to"):
                 context[
@@ -70,6 +67,7 @@ class BookListView(ListView):
         ordering = ["title"]
 
 
+
 def book_edit_view(request, id):
 
     if request.method == "POST":
@@ -78,8 +76,7 @@ def book_edit_view(request, id):
         if form.is_valid():
             form.save()
             return redirect("/")
-        else:
-            print(form.errors)
+       
     else:
         instance = Book.objects.get(pk=id)
         form = AddOrEditForm(
@@ -99,15 +96,13 @@ def book_add_view(request):
         if form.is_valid():
             form.save()
             return redirect("/")
-        else:
-            print(form.errors)
+
     else:
         form = AddOrEditForm()
     return render(request, "book_app/book_edit.html", {"form": form})
 
 
 def book_impoert_view(request):
-    print(request.GET)
     if request.method == "GET":
         form = ImportForm()
 
@@ -211,7 +206,6 @@ def book_import_to_DB(request, id):
             book["pub_date"] = datetime.strptime(book["pub_date"], "%Y-%m").date()
         else:
             book["pub_date"] = datetime.strptime(book["pub_date"], "%Y-%m-%d").date()
-    print(book)
     b = Book(**book)
     b.save()
     return redirect("/")
