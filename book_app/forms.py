@@ -19,7 +19,8 @@ class AddOrEditForm(forms.ModelForm):
     def clean(self):
         super().clean()
         if self.cleaned_data.get("language") == "":
-            self.cleaned_data["language"] = None
+            self.cleaned_data["language"] = "Nieznany"
+        
 
     class Meta:
         model = Book

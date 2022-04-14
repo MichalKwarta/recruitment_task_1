@@ -84,7 +84,7 @@ def book_edit_view(request, id):
             initial={
                 "pub_date": instance.pub_date.strftime(format="%Y-%m-%d")
                 if instance.pub_date
-                else None
+                else ''
             },
         )
     return render(request, "book_app/book_edit.html", {"form": form})
@@ -195,7 +195,7 @@ def book_import_to_DB(request, id):
         else 0,
         "language": book["volumeInfo"]["language"].upper()
         if "language" in book["volumeInfo"]
-        else "",
+        else "Nieznany",
         "google_id": book["id"] if "id" in book else "null",
     }
 
