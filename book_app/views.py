@@ -1,60 +1,73 @@
 from typing import Any
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
+import requests
+from django.core import serializers
+from .forms import AddOrEditForm, ImportForm
+import datetime
 
-
-from .forms import AddOrEditForm
-
-
+from datetime import datetime
 
 from .models import Book
 
+def extractISBN(industryIdentifiers):
+    for item in industryIdentifiers:
+        if item['type'] == 'ISBN_13':
+            return item['identifier']
+    return "Brak danych"
+
+def filterByQueryStrings(queryset,request):
+    if request.GET.get('language'):
+            queryset = queryset.filter(language=request.GET['language'])
+    if request.GET.get('author'):
+        queryset = queryset.filter(
+            author__icontains=request.GET['author'])
+    if request.GET.get('title'):
+        queryset = queryset.filter(
+            title__icontains=request.GET['title'])
+    if request.GET.get('date_from'):
+        queryset = queryset.filter(
+            pub_date__gte=request.GET['date_from'])
+    if request.GET.get('date_to'):
+        queryset = queryset.filter(
+            pub_date__lte=request.GET['date_to'])
+    return queryset
 
 class BookListView(ListView):
 
     model = Book
-    paginate_by = 2  # if pagination is desired
+    paginate_by = 20  
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['now'] = timezone.now()
-        
-        context['query'] = '&'.join([f"{key}={value}" for key, value in self.request.GET.items() if key!='page'])
+
+        context['query'] = '&'.join(
+            [f"{key}={value}" for key, value in self.request.GET.items() if key != 'page'])
         print(context['query'])
         if self.request.GET.get('date_from') and self.request.GET.get('date_to'):
-            if (self.request.GET.get('date_from')>=self.request.GET.get('date_to')):
+            if datetime.datetime(*[int(x) for x in self.request.GET.get('date_from').split('-')]) >= datetime.datetime(*[int(x) for x in self.request.GET.get('date_to').split('-')]):
                 context['errors'] = 'Data początkowa musi być wcześniejsza niż data końcowa'
         return context
-        
+
     def get_queryset(self):
         queryset = Book.objects.all().order_by('title')
-        
+
         self.request.choices = set([x.language for x in queryset])
-        if self.request.GET.get('language'):
-            queryset = queryset.filter(language=self.request.GET['language'])
-        if self.request.GET.get('author'):
-            queryset = queryset.filter(author__istartswith=self.request.GET['author'])
-        if self.request.GET.get('title'):
-            queryset = queryset.filter(title__istartswith=self.request.GET['title'])
-        if self.request.GET.get('date_from'):
-            queryset = queryset.filter(pub_date__gte=self.request.GET['date_from'])
-        if self.request.GET.get('date_to'):
-            queryset = queryset.filter(pub_date__lte=self.request.GET['date_to'])
+        queryset = filterByQueryStrings(queryset,self.request)
         return queryset
-    
+
     class Meta:
         ordering = ['title']
 
 
-
-
-def BookEditView(request,pk):   
+def BookEditView(request, id):
 
     if request.method == 'POST':
-        form = AddOrEditForm(request.POST,instance=Book.objects.get(pk=pk))
+        form = AddOrEditForm(request.POST, instance=Book.objects.get(pk=id))
 
         if form.is_valid():
             form.save()
@@ -62,9 +75,12 @@ def BookEditView(request,pk):
         else:
             print(form.errors)
     else:
-        instance = Book.objects.get(pk=pk)
-        form = AddOrEditForm(instance=instance,initial={'pub_date':instance.pub_date.strftime(format='%Y-%m-%d')})
+        instance = Book.objects.get(pk=id)
+        form = AddOrEditForm(instance=instance, initial={
+                             'pub_date': instance.pub_date.strftime(format='%Y-%m-%d')})
     return render(request, 'book_app/book_edit.html', {'form': form})
+
+
 def BookAddView(request):
     if request.method == 'POST':
         form = AddOrEditForm(request.POST)
@@ -76,3 +92,79 @@ def BookAddView(request):
     else:
         form = AddOrEditForm()
     return render(request, 'book_app/book_edit.html', {'form': form})
+
+
+def BookImportView(request):
+    print(request.GET)
+    if request.method == 'GET':
+        form = ImportForm()
+        
+        query = request.GET.get('query', '')
+        if query:
+            request_data = requests.get(
+                f"https://www.googleapis.com/books/v1/volumes?q={query}")
+            if request_data.status_code != 200:
+                return render(request, 'book_app/book_import.html', {'form': form, 'errors': 'Przepraszamy, nie można pobrać wyników'})
+            request_data = request_data.json()
+            if 'items' not in request_data:
+                return render(request, 'book_app/book_import.html', {'form': form, 'errors': 'Przepraszamy, nie znaleziono wyników'})
+            books = [item for item in request_data['items'] if item['id'] not in [x[0] for x in Book.objects.values_list('google_id')]]
+            object_list = [
+                {'title': book['volumeInfo']['title'] + ' ' + book['volumeInfo'].get('subtitle', ''),
+                'cover_url': book['volumeInfo']['imageLinks']['thumbnail'] if 'imageLinks' in book['volumeInfo'] else "",
+                'author': ", ".join(book['volumeInfo']['authors']) if 'authors' in book['volumeInfo'] else "Brak danych",
+                'pub_date': book['volumeInfo']['publishedDate'] if 'publishedDate' in book['volumeInfo'] else "Brak danych",
+                'isbn': extractISBN(book['volumeInfo']['industryIdentifiers']) if 'industryIdentifiers' in book['volumeInfo'] else "Brak danych",
+                'page_count': book['volumeInfo']['pageCount'] if 'pageCount' in book['volumeInfo'] else "Brak danych",
+                'language': book['volumeInfo']['language'].upper() if 'language' in book['volumeInfo'] else "Brak danych",
+                'google_id': book['id'] if 'id' in book else "null",
+                
+                }
+
+                for book in books
+
+            ]
+
+            return render(request, 'book_app/book_import.html', {'form': form, 'object_list': object_list})
+        else:
+            return render(request, 'book_app/book_import.html', {'form': form, 'object_list':[]})
+
+
+def BookImportToDB(request, id):
+    req = requests.get(f"https://www.googleapis.com/books/v1/volumes/{id}")
+    if req.status_code != 200:
+        return JsonResponse({'errors': 'Przepraszamy, nie można pobrać wyników'})
+    book = req.json()
+    book = {'title': book['volumeInfo']['title'] + ' ' + book['volumeInfo'].get('subtitle', ''),
+            'cover_url': book['volumeInfo']['imageLinks']['thumbnail'] if 'imageLinks' in book['volumeInfo'] else "",
+            'author': ", ".join(book['volumeInfo']['authors']) if 'authors' in book['volumeInfo'] else "",
+            'pub_date': book['volumeInfo']['publishedDate'] if 'publishedDate' in book['volumeInfo'] else "",
+            'isbn': extractISBN(book['volumeInfo']['industryIdentifiers']) if 'industryIdentifiers' in book['volumeInfo'] else "",
+
+            'page_count': book['volumeInfo']['pageCount'] if 'pageCount' in book['volumeInfo'] else 0,
+            'language': book['volumeInfo']['language'].upper() if 'language' in book['volumeInfo'] else "",
+            'google_id':book['id'] if 'id' in book else "null"
+            }
+
+    if book['pub_date']:
+        if len(book['pub_date'].split('-')) == 1:
+            book['pub_date'] = datetime.strptime(book['pub_date'], '%Y').date()
+        elif len(book['pub_date'].split('-')) == 2:
+            book['pub_date'] = datetime.strptime(
+                book['pub_date'], '%Y-%m').date()
+        else:
+            book['pub_date'] = datetime.strptime(
+                book['pub_date'], '%Y-%m-%d').date()
+    print(book)
+    b = Book(**book)
+    b.save()
+    return redirect('/')
+    
+
+def delete(request,id):
+    Book.objects.get(pk=id).delete()
+    return redirect('/')
+def api(request):
+    books = Book.objects.all()
+    data = filterByQueryStrings(books,request)
+    return HttpResponse(serializers.serialize('json', data), content_type='application/json')

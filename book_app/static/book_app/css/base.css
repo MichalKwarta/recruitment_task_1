@@ -45,22 +45,28 @@ div.card{
     border-radius: 10px;
     padding:2rem;
     margin:1rem;
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
+    display:flex;
+    flex-direction: row;
+}
+div.card>*{
+    margin:1rem;
+
+    
+}
+div.card>img{
+    border-radius: 10px;
+    display:block;
+    height: auto;
+    object-fit: contain;
+    width:clamp(2rem,100%,300px);
+
 }
 .card li{
     list-style: none;
+    word-wrap: break-word;
     padding:0.25rem;
 }
-.card ul{
-    grid-row: 1;
-    grid-column: 2;
-}
-.card img {
-    grid-row:1;
-    grid-column: 1;
-}
+
 
 .pagination{
     display:flex;
@@ -137,5 +143,24 @@ ul.errorlist{
     background-color: rgba(255,100,100,0.5);  
     border-radius:.5rem;
     padding:1rem;
+    
+}
+button.delete{
+    color:var(--white);
+    border-color:red;
+    border-radius: .25rem;
+    cursor:pointer;
+    transition: .25s ease-in;
+    margin:1rem;
+}
+button.delete:hover{
+    color:var(--white);
+    background-color: red;
+}
+
+a{
+    text-decoration: none;
+    color:var(--white);
+    width:100%;
     
 }

@@ -1,0 +1,56 @@
+
+{% extends 'book_app/base.html' %}
+
+{% block 'content' %}
+<div class="form">
+    <form method="GET" action="{% url 'BookImportView' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>Wyszukaj</button>
+    </form>
+</div>
+<div class="content">
+    {% if errors  %}
+    <h2>{{ errors }}</h2>
+    {% else %}
+    {% for book in object_list %}
+    <div class="card">
+
+    <img src="{{book.cover_url}}" alt="Brak okładki" >
+    <ul>
+
+    <li>Tytuł: {{ book.title }}</li>
+    <li>Autor: {{book.author}}</li>
+    <li>Data wydania: {{book.pub_date}}</li>
+    <li>ISBN: {{book.isbn}}</li>
+    <li>Ilość stron: {{book.page_count}}</li>
+    <li>Język: {{book.language}}</li>
+    <li>
+        <a href="{% url 'BookImportToDB' book.google_id %}">
+    <button >
+        Dodaj
+    </button>
+</a>
+
+    </li>
+    </ul>
+</div>
+
+{% empty %}
+        Nie znaleziono takich książek
+{% endfor %}
+</div>
+
+
+
+{% endif %}
+
+
+
+
+
+
+
+{% endblock 'content' %}
+
+

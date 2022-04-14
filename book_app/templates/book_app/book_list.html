@@ -62,18 +62,26 @@
     <li>Ilość stron: {{book.page_count}}</li>
     <li>Język: {{book.language}}</li>
     <li>
-        <a href="{% url 'edit' book.id  %}">
+        <a href="{% url 'editBook' book.id  %}">
     <button >
         Edytuj
     </button>
 </a>
 
+    
+
+        <a href="{% url 'deleteBook' book.id  %}">
+            <button class="delete">
+                Usuń
+            </button>
+        </a>
+        
     </li>
     </ul>
 </div>
 
 {% empty %}
-        {Nie znaleziono takich książek}
+        Nie znaleziono takich książek
 {% endfor %}
 </div>
 
