@@ -36,7 +36,7 @@ def filter_by_query_strings(queryset, request):
 class BookListView(ListView):
 
     model = Book
-    paginate_by = 20
+    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
