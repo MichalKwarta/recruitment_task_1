@@ -49,7 +49,7 @@ class BookListView(ListView):
             [f"{key}={value}" for key, value in self.request.GET.items() if key != 'page'])
         print(context['query'])
         if self.request.GET.get('date_from') and self.request.GET.get('date_to'):
-            if datetime.datetime(*[int(x) for x in self.request.GET.get('date_from').split('-')]) >= datetime.datetime(*[int(x) for x in self.request.GET.get('date_to').split('-')]):
+            if self.request.GET.get('date_from') > self.request.GET.get('date_to'):
                 context['errors'] = 'Data początkowa musi być wcześniejsza niż data końcowa'
         return context
 

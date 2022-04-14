@@ -10,5 +10,5 @@ urlpatterns = [
 
     path('import/',views.BookImportView,name='BookImportView'),
     path('import/<id>',views.BookImportToDB,name='BookImportToDB'),
-    path('api/',views.api)
+    path('api/',views.api,name='API')
 ]

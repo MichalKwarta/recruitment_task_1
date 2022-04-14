@@ -1,6 +1,8 @@
 
 {% extends 'book_app/base.html' %}
 
+{% load static %}
+
 {% block 'content' %}
 <div class="form">
     <form method="GET" action="{% url 'BookImportView' %}">
@@ -9,6 +11,8 @@
         <button>Wyszukaj</button>
     </form>
 </div>
+
+
 <div class="content">
     {% if errors  %}
     <h2>{{ errors }}</h2>
@@ -16,15 +20,20 @@
     {% for book in object_list %}
     <div class="card">
 
-    <img src="{{book.cover_url}}" alt="Brak okładki" >
+        {% if book.cover_url %}
+        <img src="{{book.cover_url}}" alt="Okładka" class="cover" >
+        {% else %}
+        <img src="{% static 'book_app/img/question_mark.png' %}" alt="Okładka" class = "cover">
+        
+        {% endif %}
     <ul>
 
-    <li>Tytuł: {{ book.title }}</li>
-    <li>Autor: {{book.author}}</li>
-    <li>Data wydania: {{book.pub_date}}</li>
-    <li>ISBN: {{book.isbn}}</li>
-    <li>Ilość stron: {{book.page_count}}</li>
-    <li>Język: {{book.language}}</li>
+    <li>Tytuł: {{ book.title|default_if_none:"Nieznany" }}</li>
+    <li>Autor: {{book.author|default_if_none:"Nieznany"}}</li>
+    <li>Data wydania: {{book.pub_date|default_if_none:"Nieznany" }}</li>
+    <li>ISBN: {{book.isbn|default_if_none:"Nieznany" }}</li>
+    <li>Ilość stron: {{book.page_count|default_if_none:"Nieznana" }}</li>
+    <li>Język: {{book.language|default_if_none:"Nieznany" }}</li>
     <li>
         <a href="{% url 'BookImportToDB' book.google_id %}">
     <button >

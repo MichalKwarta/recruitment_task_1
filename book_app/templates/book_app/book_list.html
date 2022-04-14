@@ -1,6 +1,8 @@
 
 {% extends 'book_app/base.html' %}
 
+{% load static %}
+
 {% block 'content' %}
 <div class="form">
     <form method='GET' class="filter">
@@ -14,7 +16,7 @@
 
             <label for="author">Autor</label>
     
-            <input type="text" name='author' placeholder="Autor" value = {{request.GET.author}}>
+            <input type="text" name='author' value = {{request.GET.author}}>
         </span>
         <span class='form__field'>
 
@@ -51,16 +53,20 @@
     {% else %}
     {% for book in object_list %}
     <div class="card">
-
-    <img src="{{book.cover_url}}" alt="Okładka" >
+    {% if book.cover_url %}
+    <img src="{{book.cover_url}}" alt="Okładka" class="cover">
+    {% else %}
+    <img src="{% static 'book_app/img/question_mark.png' %}" alt="Okładka" class="cover">
+    
+    {% endif %}
     <ul>
 
-    <li>Tytuł: {{ book.title }}</li>
-    <li>Autor: {{book.author}}</li>
-    <li>Data wydania: {{book.pub_date}}</li>
-    <li>ISBN: {{book.isbn}}</li>
-    <li>Ilość stron: {{book.page_count}}</li>
-    <li>Język: {{book.language}}</li>
+    <li>Tytuł: {{ book.title |default_if_none:"Nieznany" }}</li>
+    <li>Autor: {{book.author|default_if_none:"Nieznany" }}</li>
+    <li>Data wydania: {{book.pub_date|default_if_none:"Nieznany" }}</li>
+    <li>ISBN: {{book.isbn|default_if_none:"Nieznany" }}</li>
+    <li>Ilość stron: {{book.page_count|default_if_none:"Nieznana" }}</li>
+    <li>Język: {{book.language|default_if_none:"Nieznany" }}</li>
     <li>
         <a href="{% url 'editBook' book.id  %}">
     <button >

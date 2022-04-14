@@ -1,166 +1,163 @@
-:root{
-    --dark:#212734;
-    --golden:#c49a50;
-    --light:#fdfdfd;
-
+:root {
+  --dark: #212734;
+  --golden: #c49a50;
+  --light: #fdfdfd;
 }
 
-body{
-    background-color: var(--dark);
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    color:var(--light)
-
-}
-nav{
-    width:100%;
-    padding:1rem;
-    border-bottom:1px solid #c49a50;
+/* reset */
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-*,*::after,*::before{
-    box-sizing: border-box;
-    margin:0;
-    padding:0;
+/* tag selectors */
+button {
+  padding: 0.5rem;
+  outline: none;
+  border: none;
+  background-color: var(--dark);
+  border: 1px solid var(--golden);
+  border-radius: 0.25rem;
+  color: var(--light);
+  cursor: pointer;
+  transition: 0.25s ease-in;
+  margin: 1rem;
 }
 
-
-div.content{
-    width:100%;
-    padding:1rem;
-    display:flex;
-    flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
-    align-items: center;
-    height: 100%;
-    color:var(--light)
+body {
+  background-color: var(--dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--light);
+}
+a {
+  text-decoration: none;
+  color: var(--white);
 }
 
-div.card{
-    border:1px solid #c49a50;
-    border-radius: 10px;
-    padding:2rem;
-    margin:1rem;
-    display:flex;
-    flex-direction: row;
-}
-div.card>*{
-    margin:1rem;
-
-    
-}
-div.card>img{
-    border-radius: 10px;
-    display:block;
-    height: auto;
-    object-fit: contain;
-    width:clamp(2rem,100%,300px);
-
-}
-.card li{
-    list-style: none;
-    word-wrap: break-word;
-    padding:0.25rem;
+nav {
+  width: 100%;
+  padding: 1rem;
+  border-bottom: 1px solid #c49a50;
 }
 
-
-.pagination{
-    display:flex;
-    flex-direction: row;
-
+div.content {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  height: 100%;
+  color: var(--light);
 }
-button{
-    padding:.5rem;
-    outline:none;
-    border:none;
-    background-color:var(--dark);
-    border:1px solid var(--golden);
-    border-radius: .25rem;
-    color:var(--light);
-    cursor:pointer;
-    transition: .25s ease-in;
-    margin:1rem;
 
+div.card {
+  border: 1px solid #c49a50;
+  border-radius: 10px;
+  width:30rem;
+  height: 30rem;
+  padding: 1.5rem;
+  margin: 1rem;
+  display: flex;
+  flex-direction: row;
+}
 
+div.card > ul,img.cover {
+  margin: 1rem;
 }
-.mybutton:hover{
-    background-color:var(--golden);
-    color:var(--dark);
+
+.cover {
+  border-radius: 10px;
+  display: block;
+  object-position: center;
+  height: auto;
+  object-fit: contain;
+  width: clamp(5rem, 100%, 15rem);
 }
-.pagination__button:hover{
+.card li {
+  list-style: none;
+  word-wrap: break-word;
+  padding: 0.25rem;
+}
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+}
+.pagination__button:hover {
     transform: translateY(-1rem);
-    transition: .25s ease-in;
-}
-#pagination__current
-{
-    background-color:var(--golden);
-    color:var(--dark);
-    animation: appear .25s ease-in;
-}
-@keyframes appear {
-    from {
-        transform: translateY(-1rem);
-    }
-    to {
-        transform: translateY(0);
-    }
-    
-}
-.form
-{
-   
-    border-bottom:1px solid var(--golden);
-}
-.form>.filter{
-    display:flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    width:100%;
-}
-.form p{
-    margin:1rem;
-}
-.form p>input
-{
-    width: 100%;
-}
-.form>form.filter>*{
-    margin:1rem;
-}
-.form__field{
-    display:flex;
-    flex-direction: column;
-}
-ul.errorlist{
-    color:var(--white);
-    list-style: none;
-    background-color: rgba(255,100,100,0.5);  
-    border-radius:.5rem;
-    padding:1rem;
-    
-}
-button.delete{
-    color:var(--white);
-    border-color:red;
-    border-radius: .25rem;
-    cursor:pointer;
-    transition: .25s ease-in;
-    margin:1rem;
-}
-button.delete:hover{
-    color:var(--white);
-    background-color: red;
+    transition: 0.25s ease-in;
+  }
+  #pagination__current {
+    background-color: var(--golden);
+    color: var(--dark);
+    animation: appear 0.25s ease-in;
+  }
+
+.mybutton:hover {
+  background-color: var(--golden);
+  color: var(--dark);
 }
 
-a{
-    text-decoration: none;
-    color:var(--white);
-    width:100%;
-    
+
+.form {
+  border-bottom: 1px solid var(--golden);
+}
+.form > .filter {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.form p {
+  margin: 1rem;
+}
+.form p > input {
+  width: 100%;
+}
+.form > form.filter > * {
+  margin: 1rem;
+}
+.form__field {
+  display: flex;
+  flex-direction: column;
+}
+ul.errorlist {
+  color: var(--white);
+  list-style: none;
+  background-color: rgba(255, 100, 100, 0.5);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+button.delete {
+  color: var(--white);
+  border-color: red;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: 0.25s ease-in;
+  margin: 1rem;
+}
+button.delete:hover {
+  color: var(--white);
+  background-color: red;
+}
+
+/* keyframes */
+@keyframes appear {
+  from {
+    transform: translateY(-1rem);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
